@@ -10,6 +10,12 @@ public class Game {
     private ServerSocket serverSocket = null;
     private final int port = 1234;
 
+    public Game() {
+        this.board = new Board();
+        board.putPiecesOnBoard();
+        board.printTest();
+    }
+
     public void startServer(){
         if (serverSocket!=null || serverSocketThread != null){
             stopServer();

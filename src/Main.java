@@ -10,6 +10,7 @@ import javax.swing.*;
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -18,5 +19,6 @@ public class Main {
             }
         });
 
+        Game game = new Game();
     }
 }
