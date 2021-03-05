@@ -13,8 +13,9 @@ public class Game {
     public Game() {
         this.board = new Board();
         board.putPiecesOnBoard();
-        board.printTest();
     }
+
+
 
     public void startServer(){
         if (serverSocket!=null || serverSocketThread != null){
@@ -52,5 +53,9 @@ public class Game {
             }
             serverSocket = null;
         }
+    }
+
+    public Board getBoard(){
+        return this.board;
     }
 }
