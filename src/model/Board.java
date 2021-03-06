@@ -75,4 +75,17 @@ public class Board {
         }
         return result;
     }
+
+    public void movePiece(Piece piece,int toPosition){
+
+        if(board[toPosition]!=null){
+            if (board[toPosition].getPieceColor()==piece.getPieceColor()){
+                return;
+            }else board[toPosition].setIsDead(true);
+        }
+
+        board[piece.getPosition()] = null;
+        board[toPosition] = piece;
+        piece.setPosition(toPosition);
+    }
 }

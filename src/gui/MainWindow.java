@@ -16,8 +16,8 @@ public class MainWindow extends JFrame {
         this.game = game;
         this.gp = new GamePanel(game);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-        this.setSize(300,300);
+        //this.setLocationRelativeTo(null);
+        this.setSize(500,500);
 
         this.add(new GamePanel(game));
 
