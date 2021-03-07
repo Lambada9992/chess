@@ -63,12 +63,16 @@ public class Piece {
                     getBishopMoves(result);
                     break;
                 case KNIGHT:
+                    getKnightMoves(result);
                     break;
                 case KING:
+                    getKingMoves(result);
                     break;
                 case QUEEN:
+                    getQueenMoves(result);
                     break;
                 case ROOK:
+                    getRookMoves(result);
                     break;
             }
         return result;
@@ -196,13 +200,79 @@ public class Piece {
     }
 
     private void getKingMoves(HashSet<Integer> moves){
+    }
 
-    }private void getQueenMoves(HashSet<Integer> moves,Piece piece){
-
+    private void getQueenMoves(HashSet<Integer> moves){
+        getRookMoves(moves);
+        getBishopMoves(moves);
     }
 
     private void getRookMoves(HashSet<Integer> moves){
-
+        int var;
+        //UP
+        var = getPosition();
+        while (var+Board.UP>=0){
+            if(board.getPiece(var+Board.UP)==null){
+                moves.add(var+Board.UP);
+                var+=Board.UP;
+            }else{
+                if(board.getPiece(var+Board.UP).getPieceColor()!=getPieceColor()){
+                    moves.add(var+Board.UP);
+                    var+=Board.UP;
+                    break;
+                }else {
+                    break;
+                }
+            }
+        }
+        //DOWN
+        var = getPosition();
+        while (var+Board.DOWN<Board.boardSize*Board.boardSize){
+            if(board.getPiece(var+Board.DOWN)==null){
+                moves.add(var+Board.DOWN);
+                var+=Board.DOWN;
+            }else{
+                if(board.getPiece(var+Board.DOWN).getPieceColor()!=getPieceColor()){
+                    moves.add(var+Board.DOWN);
+                    var+=Board.DOWN;
+                    break;
+                }else {
+                    break;
+                }
+            }
+        }
+        //RIGHT
+        var = getPosition();
+        while (var%Board.boardSize!=Board.boardSize-1){
+            if(board.getPiece(var+Board.RIGHT)==null){
+                moves.add(var+Board.RIGHT);
+                var+=Board.RIGHT;
+            }else{
+                if(board.getPiece(var+Board.RIGHT).getPieceColor()!=getPieceColor()){
+                    moves.add(var+Board.RIGHT);
+                    var+=Board.RIGHT;
+                    break;
+                }else {
+                    break;
+                }
+            }
+        }
+        //LEFT
+        var = getPosition();
+        while (var%Board.boardSize!=0){
+            if(board.getPiece(var+Board.LEFT)==null){
+                moves.add(var+Board.LEFT);
+                var+=Board.LEFT;
+            }else{
+                if(board.getPiece(var+Board.LEFT).getPieceColor()!=getPieceColor()){
+                    moves.add(var+Board.LEFT);
+                    var+=Board.LEFT;
+                    break;
+                }else {
+                    break;
+                }
+            }
+        }
     }
 
 
