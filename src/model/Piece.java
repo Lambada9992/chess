@@ -1,5 +1,6 @@
 package model;
 
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -196,10 +197,169 @@ public class Piece {
     }
 
     private void getKnightMoves(HashSet<Integer> moves){
+        //UP
+        if(getPosition()+2*Board.UP>=0){
+            //LEFT
+            if(getPosition()%Board.boardSize!=0){
+                if(board.getPiece(getPosition()+2*Board.UP+Board.LEFT)==null){
+                    moves.add(getPosition()+2*Board.UP+Board.LEFT);
+                }else {
+                    if(board.getPiece(getPosition()+2*Board.UP+Board.LEFT).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.UP+Board.LEFT);
+                    }
+                }
+            }
+            //RIGHT
+            if(getPosition()%Board.boardSize!=Board.boardSize-1){
+                if(board.getPiece(getPosition()+2*Board.UP+Board.RIGHT)==null){
+                    moves.add(getPosition()+2*Board.UP+Board.RIGHT);
+                }else {
+                    if(board.getPiece(getPosition()+2*Board.UP+Board.RIGHT).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.UP+Board.RIGHT);
+                    }
+                }
+            }
+        }
+        //DOWN
+        if(getPosition()+2*Board.DOWN<Board.boardSize*Board.boardSize){
+            //LEFT
+            if(getPosition()%Board.boardSize!=0){
+                if(board.getPiece(getPosition()+2*Board.DOWN+Board.LEFT)==null){
+                    moves.add(getPosition()+2*Board.DOWN+Board.LEFT);
+                }else {
+                    if(board.getPiece(getPosition()+2*Board.DOWN+Board.LEFT).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.DOWN+Board.LEFT);
+                    }
+                }
+            }
+            //RIGHT
+            if(getPosition()%Board.boardSize!=Board.boardSize-1){
+                if(board.getPiece(getPosition()+2*Board.DOWN+Board.RIGHT)==null){
+                    moves.add(getPosition()+2*Board.DOWN+Board.RIGHT);
+                }else {
+                    if(board.getPiece(getPosition()+2*Board.DOWN+Board.RIGHT).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.DOWN+Board.RIGHT);
+                    }
+                }
+            }
+        }
+        //LEFT
+        if(getPosition()%Board.boardSize>1){
+            //UP
+            if(getPosition()+Board.UP>=0){
+                if(board.getPiece(getPosition()+2*Board.LEFT+Board.UP)==null){
+                    moves.add(getPosition()+2*Board.LEFT+Board.UP);
+                }else{
+                    if(board.getPiece(getPosition()+2*Board.LEFT+Board.UP).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.LEFT+Board.UP);
+                    }
+                }
+            }
+            //DOWN
+            if(getPosition()+Board.DOWN<Board.boardSize*Board.boardSize){
+                if(board.getPiece(getPosition()+2*Board.LEFT+Board.DOWN)==null){
+                    moves.add(getPosition()+2*Board.LEFT+Board.DOWN);
+                }else{
+                    if(board.getPiece(getPosition()+2*Board.LEFT+Board.DOWN).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.LEFT+Board.DOWN);
+                    }
+                }
+            }
+        }
+
+        //RIGHT
+        if(getPosition()%Board.boardSize<Board.boardSize-2){
+            //UP
+            if(getPosition()+Board.UP>=0){
+                if(board.getPiece(getPosition()+2*Board.RIGHT+Board.UP)==null){
+                    moves.add(getPosition()+2*Board.RIGHT+Board.UP);
+                }else{
+                    if(board.getPiece(getPosition()+2*Board.RIGHT+Board.UP).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.RIGHT+Board.UP);
+                    }
+                }
+            }
+            //DOWN
+            if(getPosition()+Board.DOWN<Board.boardSize*Board.boardSize){
+                if(board.getPiece(getPosition()+2*Board.RIGHT+Board.DOWN)==null){
+                    moves.add(getPosition()+2*Board.RIGHT+Board.DOWN);
+                }else{
+                    if(board.getPiece(getPosition()+2*Board.RIGHT+Board.DOWN).getPieceColor()!=getPieceColor()){
+                        moves.add(getPosition()+2*Board.RIGHT+Board.DOWN);
+                    }
+                }
+            }
+        }
 
     }
 
     private void getKingMoves(HashSet<Integer> moves){
+        //UP
+        if(getPosition()+Board.UP>=0){
+            if(board.getPiece(getPosition()+Board.UP)==null){
+                moves.add(getPosition()+Board.UP);
+            }else if(board.getPiece(getPosition()+Board.UP).getPieceColor()!=getPieceColor()){
+                moves.add(getPosition()+Board.UP);
+            }
+            //LEFT
+            if(getPosition()%Board.boardSize>0){
+                if(board.getPiece(getPosition()+Board.UP+Board.LEFT)==null){
+                    moves.add(getPosition()+Board.UP+Board.LEFT);
+                } else if (board.getPiece(getPosition()+Board.UP+Board.LEFT).getPieceColor()!=getPieceColor()){
+                    moves.add(getPosition()+Board.UP+Board.LEFT);
+                }
+            }
+            //RIGHT
+            if(getPosition()%Board.boardSize<Board.boardSize-1){
+                if(board.getPiece(getPosition()+Board.UP+Board.RIGHT)==null){
+                    moves.add(getPosition()+Board.UP+Board.RIGHT);
+                } else if (board.getPiece(getPosition()+Board.UP+Board.RIGHT).getPieceColor()!=getPieceColor()){
+                    moves.add(getPosition()+Board.UP+Board.RIGHT);
+                }
+            }
+        }
+        //DOWN
+        if(getPosition()+Board.DOWN<Board.boardSize*Board.boardSize){
+            if(board.getPiece(getPosition()+Board.DOWN)==null){
+                moves.add(getPosition()+Board.DOWN);
+            }else if(board.getPiece(getPosition()+Board.DOWN).getPieceColor()!=getPieceColor()){
+                moves.add(getPosition()+Board.DOWN);
+            }
+            //LEFT
+            if(getPosition()%Board.boardSize>0){
+                if(board.getPiece(getPosition()+Board.DOWN+Board.LEFT)==null){
+                    moves.add(getPosition()+Board.DOWN+Board.LEFT);
+                } else if (board.getPiece(getPosition()+Board.DOWN+Board.LEFT).getPieceColor()!=getPieceColor()){
+                    moves.add(getPosition()+Board.DOWN+Board.LEFT);
+                }
+            }
+            //RIGHT
+            if(getPosition()%Board.boardSize<Board.boardSize-1){
+                if(board.getPiece(getPosition()+Board.DOWN+Board.RIGHT)==null){
+                    moves.add(getPosition()+Board.DOWN+Board.RIGHT);
+                } else if (board.getPiece(getPosition()+Board.DOWN+Board.RIGHT).getPieceColor()!=getPieceColor()){
+                    moves.add(getPosition()+Board.DOWN+Board.RIGHT);
+                }
+            }
+        }
+        //LEFT
+        if(getPosition()%Board.boardSize>0){
+            if(board.getPiece(getPosition()+Board.LEFT)==null){
+                moves.add(getPosition()+Board.LEFT);
+            } else if (board.getPiece(getPosition()+Board.LEFT).getPieceColor()!=getPieceColor()){
+                moves.add(getPosition()+Board.LEFT);
+            }
+        }
+        //RIGHT
+        if(getPosition()%Board.boardSize<Board.boardSize-1){
+            if(board.getPiece(getPosition()+Board.RIGHT)==null){
+                moves.add(getPosition()+Board.RIGHT);
+            } else if (board.getPiece(getPosition()+Board.RIGHT).getPieceColor()!=getPieceColor()){
+                moves.add(getPosition()+Board.RIGHT);
+            }
+        }
+        //
+
     }
 
     private void getQueenMoves(HashSet<Integer> moves){
