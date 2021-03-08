@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class GuiBoard extends JPanel {
     private Game game;
@@ -16,6 +17,7 @@ public class GuiBoard extends JPanel {
 
     private Color tileColor1 = new Color(220,255,220);
     private Color tileColor2 = new Color(100,140,20);
+    private Color tipColor = new Color(180,180,180,180);
 
     private GuiPiece chosenPiece = null;
     private Point cursorPosition = new Point(0,0);
@@ -54,6 +56,20 @@ public class GuiBoard extends JPanel {
                     g.setColor(tileColor2);
                     g.fillRect(j*getWidth()/8,i*getHeight()/8,getWidth()/8,getHeight()/8);
                 }
+            }
+        }
+
+        //Chosen piece Tips
+        if(chosenPiece!=null){
+            g.setColor(tipColor);
+            HashSet<Integer> tips = chosenPiece.getPiece().getAvailableMoves();
+            for(int tip : tips){
+                int x = tip%game.getBoard().boardSize;
+                int y = (tip-x)/game.getBoard().boardSize;
+                x*=getWidth()/8;
+                y*=getHeight()/8;
+                g.fillOval(x+getWidth()/32,y+getHeight()/32,getWidth()/16,getHeight()/16);
+
             }
         }
 
