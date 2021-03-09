@@ -92,8 +92,21 @@ public class Board {
                 return;
             }else board[toPosition].setIsDead(true);
         }
-
         board[piece.getPosition()] = null;
+
+        //castling
+        if(piece.getPieceType() == Piece.Type.KING){
+            if(toPosition - piece.getPosition() == 2*LEFT){
+                board[toPosition+RIGHT] = board[piece.getPosition()+4*LEFT];
+                board[piece.getPosition()+4*LEFT] = null;
+                board[toPosition+RIGHT].setPosition(toPosition+RIGHT);
+            }else if(toPosition - piece.getPosition() == 2*RIGHT){
+                board[toPosition+LEFT] = board[piece.getPosition()+3*RIGHT];
+                board[piece.getPosition()+3*RIGHT] = null;
+                board[toPosition+LEFT].setPosition(toPosition+LEFT);
+            }
+        }
+
         board[toPosition] = piece;
         piece.setPosition(toPosition);
         piece.setN_moves(piece.getN_moves()+1);

@@ -358,8 +358,36 @@ public class Piece {
                 moves.add(getPosition()+Board.RIGHT);
             }
         }
-        //
-
+        //CASTLING
+        if(getN_moves()==0){
+            if(getPosition()%Board.boardSize==4){
+                //LEFT
+                if(board.getPiece(getPosition()+Board.LEFT)==null &&
+                        board.getPiece(getPosition()+2*Board.LEFT)==null &&
+                        board.getPiece(getPosition()+3*Board.LEFT)==null &&
+                        board.getPiece(getPosition()+4*Board.LEFT)!=null
+                ){
+                    if(board.getPiece(getPosition()+4*Board.LEFT).getN_moves()==0 &&
+                            board.getPiece(getPosition()+4*Board.LEFT).getPieceType()==Type.ROOK &&
+                            board.getPiece(getPosition()+4*Board.LEFT).getPieceColor()==getPieceColor()
+                    ) {
+                        moves.add(getPosition() + 2 * Board.LEFT);
+                    }
+                }
+                //RIGHT
+                if(board.getPiece(getPosition()+Board.RIGHT)==null &&
+                        board.getPiece(getPosition()+2*Board.RIGHT)==null &&
+                        board.getPiece(getPosition()+3*Board.RIGHT)!=null
+                ){
+                    if(board.getPiece(getPosition()+3*Board.RIGHT).getN_moves()==0 &&
+                            board.getPiece(getPosition()+3*Board.RIGHT).getPieceType()==Type.ROOK &&
+                            board.getPiece(getPosition()+3*Board.RIGHT).getPieceColor()==getPieceColor()
+                    ) {
+                        moves.add(getPosition() + 2 * Board.RIGHT);
+                    }
+                }
+            }
+        }
     }
 
     private void getQueenMoves(HashSet<Integer> moves){

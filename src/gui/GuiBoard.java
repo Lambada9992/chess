@@ -64,7 +64,7 @@ public class GuiBoard extends JPanel {
             g.setColor(tipColor);
             HashSet<Integer> tips = chosenPiece.getPiece().getAvailableMoves();
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setStroke(new BasicStroke(5));
+            g2d.setStroke(new BasicStroke(3));
             for(int tip : tips){
                 int x = tip%game.getBoard().boardSize;
                 int y = (tip-x)/game.getBoard().boardSize;
