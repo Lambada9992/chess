@@ -22,6 +22,8 @@ public class GuiBoard extends JPanel {
     private GuiPiece chosenPiece = null;
     private Point cursorPosition = new Point(0,0);
 
+    private final static boolean DEBUG_MODE = false;
+
     public GuiBoard(Game game) {
         this.setPreferredSize(new Dimension(300,300));
         this.game = game;
@@ -51,10 +53,14 @@ public class GuiBoard extends JPanel {
         g.setColor(tileColor1);
         g.fillRect(0,0,getWidth(),getHeight());
         for(int i=0; i<8; i++){
-            for (int j=0; j<8; j++){
-                if((i+j)%2!=0){
+            for (int j=0; j<8; j++) {
+                if ((i + j) % 2 != 0) {
                     g.setColor(tileColor2);
-                    g.fillRect(j*getWidth()/8,i*getHeight()/8,getWidth()/8,getHeight()/8);
+                    g.fillRect(j * getWidth() / 8, i * getHeight() / 8, getWidth() / 8, getHeight() / 8);
+                }
+                if (DEBUG_MODE) {
+                    g.setColor(Color.red);
+                    g.drawString(Integer.toString(i * 8 + j), j * getWidth() / 8, (i + 1) * getHeight() / 8);
                 }
             }
         }
@@ -62,7 +68,7 @@ public class GuiBoard extends JPanel {
         //Chosen piece Tips
         if(chosenPiece!=null){
             g.setColor(tipColor);
-            HashSet<Integer> tips = chosenPiece.getPiece().getAvailableMoves();
+            HashSet<Integer> tips = chosenPiece.getPiece().getAvailableMoves(true);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(3));
             for(int tip : tips){
@@ -124,7 +130,7 @@ public class GuiBoard extends JPanel {
             int y = e.getY()/(GuiBoard.this.getHeight()/8);
 
             if(chosenPiece.getPiece().getPosition()!= y*8 +x) {
-                GuiBoard.this.game.getBoard().movePiece(chosenPiece.getPiece(), y * 8 + x);
+                GuiBoard.this.game.getBoard().makeMove(chosenPiece.getPiece(), y * 8 + x);
             }
             chosenPiece = null;
             GuiBoard.this.repaint();

@@ -1,6 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Board {
     public static final int boardSize = 8;
@@ -12,6 +15,7 @@ public class Board {
 
     private Piece[] board = new Piece[boardSize*boardSize];
 
+    private LinkedList<Move> movesHistory = new LinkedList<>();
 
     public void putPiecesOnBoard(){
         //BLACK
@@ -83,36 +87,106 @@ public class Board {
         return result;
     }
 
-    public void movePiece(Piece piece,int toPosition){
+    public Piece getPiece(int index){
+        return board[index];
+    }
 
-        if(!piece.getAvailableMoves().contains(toPosition)) return;
+
+    public void makeMove(Piece piece, int toPosition){
+        makeMove(piece,toPosition,false,true);
+    }
+
+    public void makeMove(Piece piece, int toPosition,boolean undoMode,boolean checkAvailableMoves){
+
+        if(checkAvailableMoves){
+            if(!piece.getAvailableMoves(true).contains(toPosition)) return;
+        }
+
+        Move move = new Move(piece,piece.getPosition(),toPosition);
 
         if(board[toPosition]!=null){
             if (board[toPosition].getPieceColor()==piece.getPieceColor()){
                 return;
-            }else board[toPosition].setIsDead(true);
+            }else {
+                board[toPosition].setIsDead(true);
+                move.setKilledPiece(board[toPosition]);
+            }
         }
         board[piece.getPosition()] = null;
 
         //castling
-        if(piece.getPieceType() == Piece.Type.KING){
-            if(toPosition - piece.getPosition() == 2*LEFT){
-                board[toPosition+RIGHT] = board[piece.getPosition()+4*LEFT];
-                board[piece.getPosition()+4*LEFT] = null;
-                board[toPosition+RIGHT].setPosition(toPosition+RIGHT);
-            }else if(toPosition - piece.getPosition() == 2*RIGHT){
-                board[toPosition+LEFT] = board[piece.getPosition()+3*RIGHT];
-                board[piece.getPosition()+3*RIGHT] = null;
-                board[toPosition+LEFT].setPosition(toPosition+LEFT);
+        if(!undoMode) {
+            if (piece.getPieceType() == Piece.Type.KING) {
+                if (toPosition - piece.getPosition() == 2 * LEFT) {
+                    move.setExtraMove(new Move(board[piece.getPosition() + 4 * LEFT], piece.getPosition() + 4 * LEFT, toPosition + RIGHT));
+                    board[toPosition + RIGHT] = board[piece.getPosition() + 4 * LEFT];
+                    board[piece.getPosition() + 4 * LEFT] = null;
+                    board[toPosition + RIGHT].setPosition(toPosition + RIGHT);
+                    board[toPosition + RIGHT].setN_moves(board[toPosition + RIGHT].getN_moves() + 1);
+                } else if (toPosition - piece.getPosition() == 2 * RIGHT) {
+                    move.setExtraMove(new Move(board[piece.getPosition() + 3 * RIGHT], piece.getPosition() + 3 * RIGHT, toPosition + LEFT));
+                    board[toPosition + LEFT] = board[piece.getPosition() + 3 * RIGHT];
+                    board[piece.getPosition() + 3 * RIGHT] = null;
+                    board[toPosition + LEFT].setPosition(toPosition + LEFT);
+                    board[toPosition + LEFT].setN_moves(board[toPosition + LEFT].getN_moves() + 1);
+                }
             }
         }
 
         board[toPosition] = piece;
         piece.setPosition(toPosition);
         piece.setN_moves(piece.getN_moves()+1);
+        if(!undoMode)movesHistory.add(move);
     }
 
-    public Piece getPiece(int index){
-        return board[index];
+    public void undoMove(){
+        if(movesHistory.size()!=0){
+            Move move = movesHistory.peekLast();
+            movesHistory.removeLast();
+            makeMove(move.getPiece(),move.getFrom(),true,false);
+            move.getPiece().setN_moves(move.getPiece().getN_moves()-2);
+
+            if(move.getKilledPiece()!=null){
+                board[move.getTo()] = move.getKilledPiece();
+                move.getKilledPiece().setIsDead(false);
+            }
+
+            if(move.getExtraMove()!=null){
+                movesHistory.add(move.getExtraMove());
+                undoMove();
+            }
+        }
+
     }
+
+    /**
+     * is it Check ?
+     *
+     * Method that is returning information if the chosen king(by color) can be killed by any other piece on the board
+     *
+     * @param color Color of king that is being checked
+     * @return true/false
+     */
+    public boolean isCheck(Piece.Color color){
+        Piece king = null;
+
+        HashSet<Integer> allCoveredTiles = new HashSet<>();
+
+        for(Piece var : board){
+            if(var!=null){
+                //findKing
+                if(var.getPieceType()== Piece.Type.KING && var.getPieceColor()==color){
+                    king = var;
+                }
+                //get all covered places
+                if(var.getPieceColor()!=color){
+                    allCoveredTiles.addAll(var.getAvailableMoves(false));
+                }
+            }
+        }
+
+        return allCoveredTiles.contains(king.getPosition())? true : false ;
+    }
+
+
 }

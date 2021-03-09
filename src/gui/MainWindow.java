@@ -1,9 +1,12 @@
 package gui;
 
 import model.Game;
+import model.Piece;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
     private Game game;
@@ -39,8 +42,19 @@ public class MainWindow extends JFrame {
             this.game = game;
             guiBoard = new GuiBoard(game);
             this.setLayout(new BorderLayout());
-            //this.setBounds(0,0,300,300);
             this.add(guiBoard);
+
+            JButton undoButton = new JButton("Undo");
+            undoButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    game.getBoard().undoMove();
+                    guiBoard.repaint();
+                }
+            });
+
+            this.add(undoButton,"East");
+
             this.setVisible(true);
         }
     }

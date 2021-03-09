@@ -38,6 +38,7 @@ public class Game {
             }
         }).start();
     }
+
     public void stopServer(){
         if(serverSocketThread!=null){
             serverSocketThread.interrupt();

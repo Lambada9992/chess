@@ -54,7 +54,7 @@ public class Piece {
         this.n_moves = n_moves;
     }
 
-    public HashSet<Integer> getAvailableMoves(){
+    public HashSet<Integer> getAvailableMoves(boolean checkIllegalMoves){
         HashSet<Integer> result = new HashSet<>();
             switch (this.type){
                 case PAWN:
@@ -75,6 +75,25 @@ public class Piece {
                 case ROOK:
                     getRookMoves(result);
                     break;
+            }
+            if(checkIllegalMoves) {
+                HashSet<Integer> illegalMoves = new HashSet<>();
+                for (Integer move : result) {
+                    board.makeMove(this, move, false, false);
+                    if (board.isCheck(color)) {
+                        illegalMoves.add(move);
+                    }
+                    board.undoMove();
+                }
+                HashSet<Integer> var = new HashSet<>();
+                var.addAll(result);
+                result.clear();
+
+                for(Integer move : var){
+                    if(!illegalMoves.contains(move)){
+                        result.add(move);
+                    }
+                }
             }
         return result;
     }
