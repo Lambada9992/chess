@@ -127,7 +127,7 @@ public class Piece {
                     }
                 }
             }
-            //right //TODO check if its okay
+            //right
             if(Board.boardSize - (getPosition()%Board.boardSize)!=1){
                 if(board.getPiece(positionInNextRow+Board.RIGHT)!=null){
                     if(board.getPiece(positionInNextRow+Board.RIGHT).getPieceColor()!=getPieceColor()){

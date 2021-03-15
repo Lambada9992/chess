@@ -20,9 +20,10 @@ public class ConnectionHandler extends Thread{
     private Runnable reader = ()->{
         while (!Thread.currentThread().isInterrupted()){
             try {
-                //TODO handle in messages
-                in.add(inBuffer.readLine().trim());
-                
+                String message = inBuffer.readLine().trim();
+                game.interpretMessage(message);
+                //System.out.println("Reading: " + message);
+
             } catch (IOException e) {
                 break;
             } catch (NullPointerException e){
@@ -34,7 +35,9 @@ public class ConnectionHandler extends Thread{
     private Runnable writer = ()->{
         while (!Thread.currentThread().isInterrupted()){
             try {
-                outBuffer.write(out.take());
+                String message = out.take();
+                //System.out.println("Writing: "+message);
+                outBuffer.write(message+"\r\n");
                 outBuffer.flush();
             } catch (IOException e) {
                 e.printStackTrace();

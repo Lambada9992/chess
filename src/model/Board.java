@@ -1,9 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Board {
 
@@ -82,20 +79,6 @@ public class Board {
             }
             System.out.println();
         }
-    }
-
-    public ArrayList<Piece> getPieces(){
-        ArrayList<Piece> result = new ArrayList<Piece>();
-        for(int i=0;i<board.length; i++){
-            if (board[i]!=null){
-                result.add(board[i]);
-            }
-        }
-        return result;
-    }
-
-    public Piece getPiece(int index){
-        return board[index];
     }
 
     public void makeMove(Piece piece, int toPosition){
@@ -192,6 +175,20 @@ public class Board {
         }
 
         return allCoveredTiles.contains(king.getPosition())? true : false ;
+    }
+
+    public ArrayList<Piece> getPieces(){
+        ArrayList<Piece> result = new ArrayList<Piece>();
+        for(int i=0;i<board.length; i++){
+            if (board[i]!=null){
+                result.add(board[i]);
+            }
+        }
+        return result;
+    }
+
+    public Piece getPiece(int index){
+        return board[index];
     }
 
 

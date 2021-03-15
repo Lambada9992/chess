@@ -10,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GuiBoard extends JPanel {
@@ -28,6 +30,12 @@ public class GuiBoard extends JPanel {
     public GuiBoard(Game game) {
         this.setPreferredSize(new Dimension(300,300));
         this.game = game;
+        game.setUpdateBoardObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                GuiBoard.this.repaint();
+            }
+        });
         this.addMouseListener(new ClickListener());
         this.addMouseMotionListener(new DragListener());
     }
@@ -127,7 +135,7 @@ public class GuiBoard extends JPanel {
             int y = e.getY()/(GuiBoard.this.getHeight()/8);
 
             if(chosenPiece.getPiece().getPosition()!= y*8 +x) {
-                GuiBoard.this.game.move(chosenPiece.getPiece(), y * 8 + x);
+                GuiBoard.this.game.move(chosenPiece.getPiece(), y * 8 + x,true);
             }
             chosenPiece = null;
             GuiBoard.this.repaint();

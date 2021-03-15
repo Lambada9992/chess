@@ -1,13 +1,13 @@
 package gui;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import model.Game;
-import model.Piece;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Observable;
+import java.util.Observer;
 
 public class MainWindow extends JFrame {
     private JPanel mainPanel = new JPanel();
@@ -34,6 +34,13 @@ public class MainWindow extends JFrame {
         mainPanel.setLayout(cl);
 
         this.game = game;
+        game.setDisplayGameObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                MainWindow.this.gp.getGuiBoard().updateGuiPieces();
+                MainWindow.this.cl.show(MainWindow.this.mainPanel,"game");
+            }
+        });
         this.gp = new GamePanel(game);
 
         mainPanel.add(mmp,"mainMenu");
