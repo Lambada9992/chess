@@ -43,8 +43,8 @@ public class Board {
     }
 
     public void clearBoard(){
-        for(Piece piece : board){
-            piece = null;
+        for(int i = 0;i<board.length;i++){
+            board[i] = null;
         }
         movesHistory.clear();
     }
@@ -173,7 +173,7 @@ public class Board {
                 }
             }
         }
-
+        if (king==null) return true;
         return allCoveredTiles.contains(king.getPosition())? true : false ;
     }
 
