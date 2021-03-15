@@ -6,18 +6,18 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Board {
-    public static final int boardSize = 8;
 
+    public static final int boardSize = 8;
     public static final int UP = -boardSize;
     public static final int DOWN = boardSize;
     public static final int RIGHT = 1;
     public static final int LEFT = -1;
 
     private Piece[] board = new Piece[boardSize*boardSize];
-
     private LinkedList<Move> movesHistory = new LinkedList<>();
 
     public void putPiecesOnBoard(){
+        clearBoard();
         //BLACK
         board[0] = new Piece(0, Piece.Type.ROOK,Piece.Color.BLACK,this);
         board[1] = new Piece(1, Piece.Type.KNIGHT,Piece.Color.BLACK,this);
@@ -43,6 +43,13 @@ public class Board {
         for(int i=boardSize*(boardSize-2); i<boardSize*(boardSize-1);i++){
             board[i] = new Piece(i,Piece.Type.PAWN,Piece.Color.WHITE,this);
         }
+    }
+
+    public void clearBoard(){
+        for(Piece piece : board){
+            piece = null;
+        }
+        movesHistory.clear();
     }
 
     public void printBoardConsole(){
@@ -90,7 +97,6 @@ public class Board {
     public Piece getPiece(int index){
         return board[index];
     }
-
 
     public void makeMove(Piece piece, int toPosition){
         makeMove(piece,toPosition,false,true);

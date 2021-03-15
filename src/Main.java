@@ -25,10 +25,11 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame.setDefaultLookAndFeelDecorated(true);
+                //JFrame.setDefaultLookAndFeelDecorated(true);
                 mainWindow = new MainWindow("Chess by Marcin Bobiński",game);
             }
         });
+
 
     }
 }
