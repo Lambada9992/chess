@@ -7,7 +7,6 @@ import javax.swing.*;
 /**
  * @author Marcin Bobiński (Lambada9992)
  */
-
 public class Main {
 
     private static MainWindow mainWindow;

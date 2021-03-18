@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Observer;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class Game {
-    public enum State{RUNNING,NOTRUNNING}
     public enum Mode{NONE,LAN,HOST,JOIN}
 
     private Mode mode = Mode.NONE;
@@ -16,6 +16,7 @@ public class Game {
     private Piece.Color currentMove = Piece.Color.WHITE;
     private Piece.Color playerColor = null;
     private Piece.Color preferredColor = null;
+    private Piece.Color opponentPrefferedColor = null;
 
     private ServerSocket serverSocket = null;
     private Socket socket = null;
@@ -62,7 +63,8 @@ public class Game {
                     if(connectionHandler!=null)connectionHandler.close();
                     connectionHandler = new ConnectionHandler(socket,Game.this);
                     connectionHandler.start();
-                    displayGameObserver.update(null,null);
+                    connectionHandler.write(createSetPreferredColorMessage(Game.this.preferredColor));
+                    connectionHandler.write(createReadyMessage());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -130,11 +132,78 @@ public class Game {
                 }
             }
             updateBoardObserver.update(null,null);
+
+        }else if(message.contains("READY")){
+            if(preferredColor == null){
+                if (opponentPrefferedColor!=null){
+                    playerColor = opponentPrefferedColor == Piece.Color.WHITE? Piece.Color.BLACK:Piece.Color.WHITE;
+                }else {
+                    Random random = new Random();
+                    playerColor = random.nextBoolean()? Piece.Color.WHITE: Piece.Color.BLACK;
+                }
+            }else {
+                playerColor = preferredColor;
+            }
+
+            if(connectionHandler!=null)connectionHandler.write(createSetColorMessage(
+                    playerColor == Piece.Color.BLACK? Piece.Color.WHITE : Piece.Color.BLACK));
+            if(displayGameObserver!=null)displayGameObserver.update(null,null);
+            if(connectionHandler!=null)connectionHandler.write(createStartMessage());
+
+        }else if(message.contains("START")){
+            if(displayGameObserver!=null)displayGameObserver.update(null,null);
+
+        }else if (message.startsWith("SETPCOLOR")){
+            message = message.replace("SETPCOLOR","");
+            if(message == "WHITE"){
+                opponentPrefferedColor = Piece.Color.WHITE;
+            }else if(message == "BLACK"){
+                opponentPrefferedColor = Piece.Color.BLACK;
+            }else if(message == "NONE"){
+                opponentPrefferedColor = null;
+            }
+
+        }else if (message.startsWith("SETCOLOR")){
+            if(message.contains("WHITE")){
+                playerColor = Piece.Color.WHITE;
+            }else if(message.contains("BLACK")){
+                playerColor = Piece.Color.BLACK;
+            }
+        }else if(message.startsWith("SURRENDER")){
+            //TODO Surrender
         }
     }
 
     private String createMoveMessage(int from,int to){
         return "MOV" + Integer.toString(from) +"%" +Integer.toString(to);
+    }
+
+    private static String createStartMessage(){
+        return "START";
+    }
+
+    private static String createReadyMessage(){
+        return "READY";
+    }
+
+    private String createSetPreferredColorMessage(Piece.Color color){
+        String message= "SETPCOLOR";
+        if(color == null){
+            message+="NONE";
+        }else {
+            message+=color== Piece.Color.WHITE? "WHITE" : "BLACK";
+        }
+        return message;
+    }
+
+    private String createSetColorMessage(Piece.Color color){
+        String message= "SETCOLOR";
+        if(color == null){
+            throw new NullPointerException("create message - set color param is null");
+        }else {
+            message+=color== Piece.Color.WHITE? "WHITE" : "BLACK";
+        }
+        return message;
     }
 
     public boolean isServerOn(){
@@ -147,14 +216,23 @@ public class Game {
 
     public void move(Piece piece,int toPosition,boolean sendToAnotherPlayer){
         if(currentMove==piece.getPieceColor()) {
+            if(sendToAnotherPlayer && mode!=Mode.LAN){
+                if(currentMove!=playerColor) return;
+            }
+            if(!sendToAnotherPlayer && mode!=Mode.LAN){
+                if(currentMove==playerColor) return;
+            }
+
             int from = piece.getPosition();
-            getBoard().makeMove(piece, toPosition);
-            currentMove = currentMove == Piece.Color.WHITE ? Piece.Color.BLACK : Piece.Color.WHITE;
-            if (sendToAnotherPlayer) {
-                if (mode == Mode.HOST || mode == Mode.JOIN) {
-                    if (connectionHandler != null) {
-                        if (connectionHandler.getStatus() == ConnectionHandler.Status.CONNECTED) {
-                            connectionHandler.write(createMoveMessage(from, toPosition));
+            boolean moveWasMade = getBoard().makeMove(piece, toPosition);
+            if (moveWasMade){
+                currentMove = currentMove == Piece.Color.WHITE ? Piece.Color.BLACK : Piece.Color.WHITE;
+                if (sendToAnotherPlayer) {
+                    if (mode == Mode.HOST || mode == Mode.JOIN) {
+                        if (connectionHandler != null) {
+                            if (connectionHandler.getStatus() == ConnectionHandler.Status.CONNECTED) {
+                                connectionHandler.write(createMoveMessage(from, toPosition));
+                            }
                         }
                     }
                 }

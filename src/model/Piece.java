@@ -1,8 +1,6 @@
 package model;
 
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.util.HashSet;
-import java.util.Set;
 
 public class Piece {
     public enum Color{WHITE,BLACK}
@@ -80,7 +78,7 @@ public class Piece {
                 HashSet<Integer> illegalMoves = new HashSet<>();
                 for (Integer move : result) {
                     board.makeMove(this, move, false, false);
-                    if (board.isCheck(color)) {
+                    if (board.isMate(color)) {
                         illegalMoves.add(move);
                     }
                     board.undoMove();

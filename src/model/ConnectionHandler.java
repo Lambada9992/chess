@@ -11,7 +11,6 @@ public class ConnectionHandler extends Thread{
     private Game game;
     private Status status = Status.DISCONNECTED;
 
-    private LinkedBlockingQueue<String> in = new LinkedBlockingQueue();
     private LinkedBlockingQueue<String> out = new LinkedBlockingQueue();
 
     private BufferedReader inBuffer;

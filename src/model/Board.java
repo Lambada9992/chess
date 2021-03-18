@@ -81,21 +81,21 @@ public class Board {
         }
     }
 
-    public void makeMove(Piece piece, int toPosition){
-        makeMove(piece,toPosition,false,true);
+    public boolean makeMove(Piece piece, int toPosition){
+        return makeMove(piece,toPosition,false,true);
     }
 
-    public void makeMove(Piece piece, int toPosition,boolean undoMode,boolean checkAvailableMoves){
+    public boolean makeMove(Piece piece, int toPosition,boolean undoMode,boolean checkAvailableMoves){
 
         if(checkAvailableMoves){
-            if(!piece.getAvailableMoves(true).contains(toPosition)) return;
+            if(!piece.getAvailableMoves(true).contains(toPosition)) return false;
         }
 
         Move move = new Move(piece,piece.getPosition(),toPosition);
 
         if(board[toPosition]!=null){
             if (board[toPosition].getPieceColor()==piece.getPieceColor()){
-                return;
+                return false;
             }else {
                 board[toPosition].setIsDead(true);
                 move.setKilledPiece(board[toPosition]);
@@ -126,6 +126,8 @@ public class Board {
         piece.setPosition(toPosition);
         piece.setN_moves(piece.getN_moves()+1);
         if(!undoMode)movesHistory.add(move);
+
+        return true;
     }
 
     public void undoMove(){
@@ -149,14 +151,14 @@ public class Board {
     }
 
     /**
-     * is it Check ?
+     * is it Mate ?
      *
      * Method that is returning information if the chosen king(by color) can be killed by any other piece on the board
      *
      * @param color Color of king that is being checked
      * @return true/false
      */
-    public boolean isCheck(Piece.Color color){
+    public boolean isMate(Piece.Color color){
         Piece king = null;
 
         HashSet<Integer> allCoveredTiles = new HashSet<>();
