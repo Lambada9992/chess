@@ -18,8 +18,8 @@ public class GuiBoard extends JPanel {
     private Game game;
     private ArrayList<GuiPiece> guiPieces = new ArrayList<>();
 
-    private Color tileColor1 = new Color(220,255,220);
-    private Color tileColor2 = new Color(100,140,20);
+    private Color tileColor1 = new Color(237, 237, 209);
+    private Color tileColor2 = new Color(118, 149, 86);
     private Color tipColor = new Color(180,180,180,180);
 
     private GuiPiece chosenPiece = null;
@@ -30,12 +30,7 @@ public class GuiBoard extends JPanel {
     public GuiBoard(Game game) {
         this.setPreferredSize(new Dimension(300,300));
         this.game = game;
-        game.setUpdateBoardObserver(new Observer() {
-            @Override
-            public void update(Observable o, Object arg) {
-                GuiBoard.this.repaint();
-            }
-        });
+
         this.addMouseListener(new ClickListener());
         this.addMouseMotionListener(new DragListener());
     }

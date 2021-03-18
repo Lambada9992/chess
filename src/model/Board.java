@@ -158,7 +158,7 @@ public class Board {
      * @param color Color of king that is being checked
      * @return true/false
      */
-    public boolean isMate(Piece.Color color){
+    public boolean checkMate(Piece.Color color){
         Piece king = null;
 
         HashSet<Integer> allCoveredTiles = new HashSet<>();

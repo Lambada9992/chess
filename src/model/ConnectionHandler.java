@@ -16,6 +16,9 @@ public class ConnectionHandler extends Thread{
     private BufferedReader inBuffer;
     private BufferedWriter outBuffer;
 
+    Thread writerThread;
+    Thread readerThread;
+
     private Runnable reader = ()->{
         while (!Thread.currentThread().isInterrupted()){
             try {
@@ -72,8 +75,8 @@ public class ConnectionHandler extends Thread{
     public void run() {
         try {
             status = Status.CONNECTED;
-            Thread writerThread = new Thread(writer);
-            Thread readerThread = new Thread(reader);
+            writerThread = new Thread(writer);
+            readerThread = new Thread(reader);
             writerThread.start();
             readerThread.start();
 
@@ -92,6 +95,12 @@ public class ConnectionHandler extends Thread{
                 socket.close();
                 inBuffer.close();
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                readerThread.join();
+                writerThread.join();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
