@@ -120,6 +120,10 @@ public class Game {
         }
     }
 
+    public boolean isServerOn(){
+        return serverSocket==null? false:true;
+    }
+
     public void interpretMessage(String message){
         if(message.startsWith("MOV")){
             message = message.replace("MOV","");
@@ -206,14 +210,6 @@ public class Game {
         return message;
     }
 
-    public boolean isServerOn(){
-        return serverSocket==null? false:true;
-    }
-
-    public Board getBoard(){
-        return this.board;
-    }
-
     public void move(Piece piece,int toPosition,boolean sendToAnotherPlayer){
         if(currentMove==piece.getPieceColor()) {
             if(sendToAnotherPlayer && mode!=Mode.LAN){
@@ -248,4 +244,11 @@ public class Game {
         this.updateBoardObserver = updateBoardObserver;
     }
 
+    public Board getBoard(){
+        return this.board;
+    }
+
+    public void setPreferredColor(Piece.Color preferredColor) {
+        this.preferredColor = preferredColor;
+    }
 }

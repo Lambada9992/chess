@@ -1,6 +1,7 @@
 package gui;
 
 import model.Game;
+import model.Piece;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -115,7 +116,7 @@ public class MainWindow extends JFrame {
 
 
         public MultiPlayerPanel() {
-            this.setLayout(new GridLayout(5,1,30,30));
+            this.setLayout(new GridLayout(6,1,30,30));
 
             hostButton.addActionListener(new ActionListener() {
                 @Override
@@ -147,10 +148,46 @@ public class MainWindow extends JFrame {
                 }
             });
 
+            //preferred color
+            ButtonGroup preferredColorGroup = new ButtonGroup();
+            JRadioButton noneButton = new JRadioButton("None",true);
+            JRadioButton whiteButton = new JRadioButton("White");
+            JRadioButton blackButton = new JRadioButton("Black");
+
+            preferredColorGroup.add(noneButton);
+            preferredColorGroup.add(whiteButton);
+            preferredColorGroup.add(blackButton);
+
+            JPanel preferrecColorPanel = new JPanel();
+            preferrecColorPanel.setLayout(new FlowLayout());
+            preferrecColorPanel.add(noneButton);
+            preferrecColorPanel.add(whiteButton);
+            preferrecColorPanel.add(blackButton);
+
+            noneButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    game.setPreferredColor(null);
+                }
+            });
+            whiteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    game.setPreferredColor(Piece.Color.WHITE);
+                }
+            });
+            blackButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    game.setPreferredColor(Piece.Color.BLACK);
+                }
+            });
+
             add(statusLabel);
             add(ipField);
             add(joinButton);
             add(hostButton);
+            add(preferrecColorPanel);
             add(mainMenuButton);
         }
     }
