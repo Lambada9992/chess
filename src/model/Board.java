@@ -158,7 +158,7 @@ public class Board {
      * @param color Color of king that is being checked
      * @return true/false
      */
-    public boolean checkMate(Piece.Color color){
+    public boolean check(Piece.Color color){
         Piece king = null;
 
         HashSet<Integer> allCoveredTiles = new HashSet<>();
@@ -177,6 +177,20 @@ public class Board {
         }
         if (king==null) return true;
         return allCoveredTiles.contains(king.getPosition())? true : false ;
+    }
+
+    public boolean checkMate(Piece.Color color){
+        for(Piece var: board){
+            if(var==null) continue;
+            if(var.getPieceColor()==color){
+                if(var.getAvailableMoves(true).size()!=0){
+                    return false;
+                }
+            }else {
+                continue;
+            }
+        }
+        return true;
     }
 
     public ArrayList<Piece> getPieces(){

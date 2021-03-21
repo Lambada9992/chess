@@ -78,7 +78,7 @@ public class Piece {
                 HashSet<Integer> illegalMoves = new HashSet<>();
                 for (Integer move : result) {
                     board.makeMove(this, move, false, false);
-                    if (board.checkMate(color)) {
+                    if (board.check(color)) {
                         illegalMoves.add(move);
                     }
                     board.undoMove();
