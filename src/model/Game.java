@@ -1,12 +1,16 @@
 package model;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Observer;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+/**
+ *  Class that represents the whole model of the game
+ */
 public class Game {
     public enum Mode{NONE,LAN,HOST,JOIN}
     public enum State{NOTSTARTED,RUNNING,ENDED}
@@ -14,7 +18,7 @@ public class Game {
     private State state = State.NOTSTARTED;
     private Mode mode = Mode.NONE;
 
-    private Board board = null;
+    private Board board = new Board();
     private Piece.Color currentMove = Piece.Color.WHITE;
     private Piece.Color playerColor = null;
     private Piece.Color preferredColor = null;
@@ -25,9 +29,12 @@ public class Game {
     private Socket socket = null;
     private final int port = 1234;
     private ConnectionHandler connectionHandler = null;
+    private boolean isConnecting = false;
+    private boolean isServerOn = false;
 
     private Observer displayGameObserver = null;
     private Observer updateBoardObserver = null;
+    private Observer connectionObserver = null;
 
     private static final String IPV4_REGEX =
             "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
@@ -36,11 +43,18 @@ public class Game {
                     "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
     private static final Pattern IPv4_PATTERN = Pattern.compile(IPV4_REGEX);
 
+    /**
+     * Default constructor
+     */
     public Game() {
-        this.board = new Board();
         this.mode = Mode.NONE;
     }
 
+    /**
+     * Method setting the mode of the app
+     *
+     * @param mode mode to be set
+     */
     public void setMode(Mode mode) {
         this.mode = mode;
         stopServer();
@@ -87,7 +101,7 @@ public class Game {
                     if(board.checkMate(currentMove)){
                         state = State.ENDED;
                         winnerColor = piece.getPieceColor();
-                    }
+                    }//TODO check mate repair
                     if (updateBoardObserver != null) updateBoardObserver.update(null, null);
                 }
             }
@@ -101,6 +115,8 @@ public class Game {
         if (socket!= null){
             disconnect();
         }
+        isConnecting = true;
+        if(connectionObserver!=null)connectionObserver.update(null,null);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,6 +127,10 @@ public class Game {
                     connectionHandler.start();
                     connectionHandler.write(createSetPreferredColorMessage(Game.this.preferredColor));
                     connectionHandler.write(createReadyMessage());
+
+                } catch (ConnectException e){
+                    isConnecting = false;
+                    if(connectionObserver!=null)connectionObserver.update(null,null);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -132,12 +152,16 @@ public class Game {
             }
             socket = null;
         }
+        isConnecting = false;
+        if(connectionObserver!=null)connectionObserver.update(null,null);
     }
 
     public void startServer(){
         if (serverSocket!=null){
             stopServer();
         }
+        isServerOn = true;
+        if(connectionObserver!=null)connectionObserver.update(null,null);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -156,6 +180,8 @@ public class Game {
     }
 
     public void stopServer(){
+        isServerOn = false;
+        if(connectionObserver!=null)connectionObserver.update(null,null);
         if (serverSocket!=null){
             try {
                 serverSocket.close();
@@ -166,8 +192,8 @@ public class Game {
         }
     }
 
-    public boolean isServerOn(){
-        return serverSocket==null? false:true;
+    public boolean getIsServerOn(){
+        return isServerOn;
     }
 
     public void interpretMessage(String message){
@@ -220,6 +246,7 @@ public class Game {
             if(updateBoardObserver!=null)updateBoardObserver.update(null,null);
         }else if(message.contains("RESTART")){
             winnerColor = null;
+            currentMove = Piece.Color.WHITE;
             board.putPiecesOnBoard();
             state = State.RUNNING;
             if(displayGameObserver!=null)displayGameObserver.update(null,null);
@@ -276,6 +303,7 @@ public class Game {
             board.putPiecesOnBoard();
             state = State.RUNNING;
             winnerColor = null;
+            currentMove = Piece.Color.WHITE;
             if(displayGameObserver!=null)displayGameObserver.update(null,null);
             if(updateBoardObserver!=null)updateBoardObserver.update(null,null);
         }
@@ -291,6 +319,14 @@ public class Game {
 
     public void setPreferredColor(Piece.Color preferredColor) {
         this.preferredColor = preferredColor;
+    }
+
+    public void setConnectionObserver(Observer connectionObserver) {
+        this.connectionObserver = connectionObserver;
+    }
+
+    public void resetWinner(){
+        winnerColor = null;
     }
 
     public Piece.Color getCurrentMove() {
@@ -316,6 +352,10 @@ public class Game {
 
     public Piece.Color getWinnerColor() {
         return winnerColor;
+    }
+
+    public boolean isConnecting() {
+        return isConnecting;
     }
 
     public void beforeClosing(){

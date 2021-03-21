@@ -1,5 +1,6 @@
 package gui;
 
+import model.Board;
 import model.Game;
 import model.Piece;
 
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GuiBoard extends JPanel {
     private Game game;
     private ArrayList<GuiPiece> guiPieces = new ArrayList<>();
+    private boolean reverseMode = false;
 
     private Color tileColor1 = new Color(237, 237, 209);
     private Color tileColor2 = new Color(118, 149, 86);
@@ -24,8 +26,6 @@ public class GuiBoard extends JPanel {
 
     private GuiPiece chosenPiece = null;
     private Point cursorPosition = new Point(0,0);
-
-    private final static boolean DEBUG_MODE = false;
 
     public GuiBoard(Game game) {
         this.setPreferredSize(new Dimension(300,300));
@@ -47,20 +47,26 @@ public class GuiBoard extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        reverseMode = game.getPlayerColor()!=Piece.Color.BLACK? false : true;
 
         //board painting
         g.setColor(tileColor1);
         g.fillRect(0,0,getWidth(),getHeight());
         for(int i=0; i<8; i++){
             for (int j=0; j<8; j++) {
-                if ((i + j) % 2 != 0) {
-                    g.setColor(tileColor2);
-                    g.fillRect(j * getWidth() / 8, i * getHeight() / 8, getWidth() / 8, getHeight() / 8);
+
+                if(!reverseMode) {
+                    if ((i + j) % 2 != 0) {
+                        g.setColor(tileColor2);
+                        g.fillRect(j * getWidth() / 8, i * getHeight() / 8, getWidth() / 8, getHeight() / 8);
+                    }
+                }else {
+                    if ((i + j) % 2 == 0) {
+                        g.setColor(tileColor2);
+                        g.fillRect(j * getWidth() / 8, i * getHeight() / 8, getWidth() / 8, getHeight() / 8);
+                    }
                 }
-                if (DEBUG_MODE) {
-                    g.setColor(Color.red);
-                    g.drawString(Integer.toString(i * 8 + j), j * getWidth() / 8, (i + 1) * getHeight() / 8);
-                }
+
             }
         }
 
@@ -71,8 +77,14 @@ public class GuiBoard extends JPanel {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setStroke(new BasicStroke(3));
             for(int tip : tips){
-                int x = tip%game.getBoard().boardSize;
-                int y = (tip-x)/game.getBoard().boardSize;
+                int tipReversed = (game.getBoard().boardSize * game.getBoard().boardSize)-1 -tip;
+
+                int x = reverseMode?tipReversed:tip;
+                x = x%game.getBoard().boardSize;
+                int y = reverseMode?tipReversed:tip;
+                y -= x;
+                y /= game.getBoard().boardSize;
+
                 x*=getWidth()/8;
                 y*=getHeight()/8;
 
@@ -88,8 +100,13 @@ public class GuiBoard extends JPanel {
         for (GuiPiece guiPiece:guiPieces) {
             if(guiPiece==chosenPiece) continue;
             if(guiPiece.getPiece().getIsDead())continue;
-            int x = guiPiece.getPiece().getPosition()%game.getBoard().boardSize;
-            int y = (guiPiece.getPiece().getPosition()-x)/game.getBoard().boardSize;
+
+            int position = guiPiece.getPiece().getPosition();
+
+            position = reverseMode?((game.getBoard().boardSize*game.getBoard().boardSize)-1)-position:position;
+
+            int x = position%game.getBoard().boardSize;
+            int y = (position-x)/game.getBoard().boardSize;
             x*=getWidth()/8;
             y*=getHeight()/8;
             g.drawImage(guiPiece.getPieceImage(),x,y,getWidth()/8,getHeight()/8,null);
@@ -112,6 +129,10 @@ public class GuiBoard extends JPanel {
             x /= GuiBoard.this.getWidth()/8;
             y /= GuiBoard.this.getHeight()/8;
 
+            x = reverseMode?game.getBoard().boardSize-1-x:x;
+            y = reverseMode?game.getBoard().boardSize-1-y:y;
+
+
             for(GuiPiece guiPiece : GuiBoard.this.guiPieces){
                 if (guiPiece.getPiece().getPosition() == y*8 + x && guiPiece.getPiece().getIsDead()==false) {
                     GuiBoard.this.chosenPiece = guiPiece;
@@ -128,6 +149,9 @@ public class GuiBoard extends JPanel {
             if(chosenPiece==null) return;
             int x = e.getX()/(GuiBoard.this.getWidth()/8);
             int y = e.getY()/(GuiBoard.this.getHeight()/8);
+
+            x = reverseMode?game.getBoard().boardSize-1-x:x;
+            y = reverseMode?game.getBoard().boardSize-1-y:y;
 
             if(chosenPiece.getPiece().getPosition()!= y*8 +x) {
                 GuiBoard.this.game.move(chosenPiece.getPiece(), y * 8 + x,true);
