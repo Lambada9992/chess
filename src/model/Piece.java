@@ -2,17 +2,53 @@ package model;
 
 import java.util.HashSet;
 
+/**
+ * A class that represent a single piece in the chess game
+ */
 public class Piece {
-    public enum Color{WHITE,BLACK}
-    public enum Type{BISHOP,KING,KNIGHT,PAWN,QUEEN,ROOK}
+    /**
+     * Colors of pieces in the game(
+     * {@link #WHITE}
+     * {@link #BLACK}
+     * )
+     */
+    public enum Color{
+        /**
+         * White color
+         */
+        WHITE,
+        /**
+         * Black color
+         */
+        BLACK
+    }
+
+    /**
+     * Types of the pieces in chess game
+     */
+    public enum Type{
+        BISHOP,
+        KING,
+        KNIGHT,
+        PAWN,
+        QUEEN,
+        ROOK
+    }
 
     private int position;
     private Type type;
     private Color color;
     private boolean isDead = false;
-    private int n_moves = 0;
+    private int movesCounter = 0;
     private Board board;
 
+    /**
+     * Constructor of the piece
+     * @param position Starting position of the piece
+     * @param type Type of the piece BISHOP, KING, KNIGHT, PAWN, QUEEN, ROOK
+     * @param color White or Black
+     * @param board Reference to the board where the piece is placed
+     */
     protected Piece(int position,Type type,Color color,Board board){
         this.position = position;
         this.type = type;
@@ -20,38 +56,72 @@ public class Piece {
         this.board = board;
     }
 
+    /**
+     * Method returns the type of the piece
+     * @return Type of the piece
+     */
     public Type getPieceType(){
         return type;
     }
 
+    /**
+     * Method returns color of the piece
+     * @return Color of the piece
+     */
     public Color getPieceColor(){
         return color;
     }
 
+    /**
+     * Sets the position
+     * @param position Position to set
+     */
     public void setPosition(int position) {
         this.position = position;
     }
 
+    /**
+     * @return Position of the piece
+     */
     public int getPosition() {
         return position;
     }
 
+    /**
+     * Sets the death state of the piece
+     * @param dead Status of death to be set
+     */
     public void setIsDead(boolean dead) {
-        isDead = dead;
+        this.isDead = dead;
     }
 
+    /**
+     * @return If the piece is dead or not.
+     */
     public boolean getIsDead() {
         return isDead;
     }
 
-    public int getN_moves() {
-        return n_moves;
+    /**
+     * @return number of moves done by this piece.
+     */
+    public int getMovesCounter() {
+        return movesCounter;
     }
 
-    public void setN_moves(int n_moves) {
-        this.n_moves = n_moves;
+    /**
+     * Sets a number of moves done by this piece.
+     * @param movesCounter Number of moves
+     */
+    public void setMovesCounter(int movesCounter) {
+        this.movesCounter = movesCounter;
     }
 
+    /**
+     * Method that returns a Hash set of positions to which the piece can move.
+     * @param checkIllegalMoves Mark if the method should get rid of moves that make king vulnerable to attack
+     * @return Set of moves.
+     */
     public HashSet<Integer> getAvailableMoves(boolean checkIllegalMoves){
         HashSet<Integer> result = new HashSet<>();
             switch (this.type){
@@ -96,6 +166,10 @@ public class Piece {
         return result;
     }
 
+    /**
+     * Returns positions to which Pawn piece can move
+     * @param moves Set to be filled with positions that piece can move.
+     */
     private void getPawnMoves(HashSet<Integer> moves){
         int movedirection = getPieceColor() == Color.WHITE? Board.UP : Board.DOWN;
 
@@ -103,7 +177,7 @@ public class Piece {
         if(getPosition()+movedirection>=0 && getPosition()+movedirection<Board.boardSize*Board.boardSize){
             if(board.getPiece(getPosition()+movedirection)==null){
                 moves.add(getPosition()+movedirection);
-                if(n_moves == 0){
+                if(movesCounter == 0){
                     if(getPosition()+2*movedirection>=0 ||
                             getPosition()+2*movedirection<Board.boardSize*Board.boardSize){
                         if(board.getPiece(getPosition()+2*movedirection)==null){
@@ -137,6 +211,10 @@ public class Piece {
 
     }
 
+    /**
+     * Returns positions to which Bishop piece can move
+     * @param moves Set to be filled with positions that piece can move.
+     */
     private void getBishopMoves(HashSet<Integer> moves){
         int var;
         //UP RIGHT
@@ -213,6 +291,10 @@ public class Piece {
         }
     }
 
+    /**
+     * Returns positions to which Knight piece can move
+     * @param moves Set to be filled with positions that piece can move.
+     */
     private void getKnightMoves(HashSet<Integer> moves){
         //UP
         if(getPosition()+2*Board.UP>=0){
@@ -310,6 +392,10 @@ public class Piece {
 
     }
 
+    /**
+     * Returns positions to which King piece can move
+     * @param moves Set to be filled with positions that piece can move.
+     */
     private void getKingMoves(HashSet<Integer> moves){
         //UP
         if(getPosition()+Board.UP>=0){
@@ -376,7 +462,7 @@ public class Piece {
             }
         }
         //CASTLING
-        if(getN_moves()==0){
+        if(getMovesCounter()==0){
             if(getPosition()%Board.boardSize==4){
                 //LEFT
                 if(board.getPiece(getPosition()+Board.LEFT)==null &&
@@ -384,7 +470,7 @@ public class Piece {
                         board.getPiece(getPosition()+3*Board.LEFT)==null &&
                         board.getPiece(getPosition()+4*Board.LEFT)!=null
                 ){
-                    if(board.getPiece(getPosition()+4*Board.LEFT).getN_moves()==0 &&
+                    if(board.getPiece(getPosition()+4*Board.LEFT).getMovesCounter()==0 &&
                             board.getPiece(getPosition()+4*Board.LEFT).getPieceType()==Type.ROOK &&
                             board.getPiece(getPosition()+4*Board.LEFT).getPieceColor()==getPieceColor()
                     ) {
@@ -396,7 +482,7 @@ public class Piece {
                         board.getPiece(getPosition()+2*Board.RIGHT)==null &&
                         board.getPiece(getPosition()+3*Board.RIGHT)!=null
                 ){
-                    if(board.getPiece(getPosition()+3*Board.RIGHT).getN_moves()==0 &&
+                    if(board.getPiece(getPosition()+3*Board.RIGHT).getMovesCounter()==0 &&
                             board.getPiece(getPosition()+3*Board.RIGHT).getPieceType()==Type.ROOK &&
                             board.getPiece(getPosition()+3*Board.RIGHT).getPieceColor()==getPieceColor()
                     ) {
@@ -407,11 +493,19 @@ public class Piece {
         }
     }
 
+    /**
+     * Returns positions to which Queen piece can move
+     * @param moves Set to be filled with positions that piece can move.
+     */
     private void getQueenMoves(HashSet<Integer> moves){
         getRookMoves(moves);
         getBishopMoves(moves);
     }
 
+    /**
+     * Returns positions to which Rook piece can move
+     * @param moves Set to be filled with positions that piece can move.
+     */
     private void getRookMoves(HashSet<Integer> moves){
         int var;
         //UP
@@ -479,6 +573,5 @@ public class Piece {
             }
         }
     }
-
 
 }

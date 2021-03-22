@@ -1,6 +1,5 @@
 package gui;
 
-import model.Board;
 import model.Game;
 import model.Piece;
 
@@ -11,10 +10,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Class that represents the board in GUI
+ * It is a Component that prints board, player, and tips
+ */
 public class GuiBoard extends JPanel {
     private Game game;
     private ArrayList<GuiPiece> guiPieces = new ArrayList<>();
@@ -22,11 +22,15 @@ public class GuiBoard extends JPanel {
 
     private Color tileColor1 = new Color(237, 237, 209);
     private Color tileColor2 = new Color(118, 149, 86);
-    private Color tipColor = new Color(180,180,180,180);
+    private Color tipColor = new Color(213, 213, 188, 255);
 
     private GuiPiece chosenPiece = null;
     private Point cursorPosition = new Point(0,0);
 
+    /**
+     * Constructor
+     * @param game Reference to the game
+     */
     public GuiBoard(Game game) {
         this.setPreferredSize(new Dimension(300,300));
         this.game = game;
@@ -35,6 +39,9 @@ public class GuiBoard extends JPanel {
         this.addMouseMotionListener(new DragListener());
     }
 
+    /**
+     * Updates the pieces that are being displayed(useful when restarting the game)
+     */
     public void updateGuiPieces(){
         ArrayList<Piece> pieces = game.getBoard().getPieces();
         guiPieces.clear();
@@ -121,6 +128,9 @@ public class GuiBoard extends JPanel {
 
     }
 
+    /**
+     * A Class that handles mouse clicks
+     */
     private class ClickListener extends MouseAdapter{
         @Override
         public void mousePressed(MouseEvent e) {
@@ -161,6 +171,9 @@ public class GuiBoard extends JPanel {
         }
     }
 
+    /**
+     * A class that handles mouse movement
+     */
     private class DragListener extends MouseMotionAdapter{
         @Override
         public void mouseDragged(MouseEvent e) {

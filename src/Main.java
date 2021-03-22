@@ -11,7 +11,14 @@ import javax.swing.*;
  * @version 1.0
  */
 public class Main {
+    /**
+     * View and controller of the app
+     */
     private static MainWindow mainWindow;
+
+    /**
+     * Model of the game
+     */
     private static Game game;
 
     public static void main(String[] args){

@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * A Class that is handling connection on a new thread
+ */
 public class ConnectionHandler extends Thread{
     public enum Status{CONNECTED,DISCONNECTED};
 
@@ -52,6 +55,11 @@ public class ConnectionHandler extends Thread{
         this.close();
     };
 
+    /**
+     * Constructor
+     * @param socket Socket to be handled
+     * @param game Reference to the game
+     */
     public ConnectionHandler(Socket socket, Game game) {
         this.socket = socket;
         this.game = game;
@@ -65,6 +73,9 @@ public class ConnectionHandler extends Thread{
 
     }
 
+    /**
+     * A method that is closing the connection handler
+     */
     public void close(){
         synchronized (this) {
             this.notify();
@@ -106,6 +117,10 @@ public class ConnectionHandler extends Thread{
         }
     }
 
+    /**
+     * Write the message on opened socket
+     * @param message Message to be send
+     */
     public void write(String message){
         try {
             out.put(message);
@@ -114,6 +129,9 @@ public class ConnectionHandler extends Thread{
         }
     }
 
+    /**
+     * @return Status of the handled connection
+     */
     public Status getStatus() {
         return status;
     }

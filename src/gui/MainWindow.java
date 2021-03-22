@@ -10,13 +10,16 @@ import java.awt.event.*;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * A class that represent window of the app
+ */
 public class MainWindow extends JFrame {
     private JPanel mainPanel = new JPanel();
     private CardLayout cl = new CardLayout();
 
     static public final Color backgroundColor = new Color(49, 46, 43);
     static public final Color buttonColor = new Color(65, 62, 60);
-    static public final Color textButtonColor = new Color(255,255,255);
+    static public final Color textColor = new Color(255,255,255);
 
     private MainMenuPanel mmp = new MainMenuPanel();
     private MultiPlayerPanel mpp;
@@ -24,6 +27,11 @@ public class MainWindow extends JFrame {
 
     private Game game;
 
+    /**
+     * Constructor
+     * @param title Title of the window
+     * @param game Reference to the game
+     */
     public MainWindow (String title,Game game){
         super(title);
         this.setIconImage(ImageLoader.getInstance().getLogoImage());
@@ -61,6 +69,9 @@ public class MainWindow extends JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * A class that represents the Main menu panel(view)
+     */
     private class MainMenuPanel extends JPanel{
 
         private Font font = new Font("TimesRoman", Font.PLAIN, 30);
@@ -69,6 +80,9 @@ public class MainWindow extends JFrame {
         private JButton multiPlayerButton = new JButton("multiPlayer");
         private JButton exitButton = new JButton("Exit");
 
+        /**
+         * Constructor
+         */
         public MainMenuPanel() {
             setBackground(MainWindow.backgroundColor);
             setLayout(new BorderLayout(50,50));
@@ -102,13 +116,13 @@ public class MainWindow extends JFrame {
             });
 
 
-            title.setForeground(MainWindow.textButtonColor);
+            title.setForeground(MainWindow.textColor);
             lanButton.setBackground(MainWindow.buttonColor);
-            lanButton.setForeground(MainWindow.textButtonColor);
+            lanButton.setForeground(MainWindow.textColor);
             multiPlayerButton.setBackground(MainWindow.buttonColor);
-            multiPlayerButton.setForeground(MainWindow.textButtonColor);
+            multiPlayerButton.setForeground(MainWindow.textColor);
             exitButton.setBackground(MainWindow.buttonColor);
-            exitButton.setForeground(MainWindow.textButtonColor);
+            exitButton.setForeground(MainWindow.textColor);
 
             JPanel buttonsPanel = new JPanel();
             buttonsPanel.setBackground(MainWindow.backgroundColor);
@@ -128,6 +142,9 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /**
+     * A class that represents the Multiplayer menu panel(view)
+     */
     private class MultiPlayerPanel extends JPanel{
         private JLabel serverStatus = new JLabel("Server: OFF",JLabel.CENTER);
         private JLabel connectingStatus = new JLabel("Connecting...",JLabel.CENTER);
@@ -137,6 +154,10 @@ public class MainWindow extends JFrame {
         private JButton mainMenuButton = new JButton("Main Menu");
 
 
+        /**
+         * Constructor
+         * @param game Reference to the game
+         */
         public MultiPlayerPanel(Game game) {
             game.setConnectionObserver(new Observer() {
                 @Override
@@ -176,28 +197,28 @@ public class MainWindow extends JFrame {
 
             //gui components
             ipField.setBackground(MainWindow.buttonColor);
-            ipField.setForeground(MainWindow.textButtonColor);
+            ipField.setForeground(MainWindow.textColor);
             hostButton.setBackground(MainWindow.buttonColor);
-            hostButton.setForeground(MainWindow.textButtonColor);
+            hostButton.setForeground(MainWindow.textColor);
             joinButton.setBackground(MainWindow.buttonColor);
-            joinButton.setForeground(MainWindow.textButtonColor);
+            joinButton.setForeground(MainWindow.textColor);
             mainMenuButton.setBackground(MainWindow.buttonColor);
-            mainMenuButton.setForeground(MainWindow.textButtonColor);
-            serverStatus.setForeground(MainWindow.textButtonColor);
-            connectingStatus.setForeground(MainWindow.textButtonColor);
+            mainMenuButton.setForeground(MainWindow.textColor);
+            serverStatus.setForeground(MainWindow.textColor);
+            connectingStatus.setForeground(MainWindow.textColor);
 
 
             //preferred color
             ButtonGroup preferredColorGroup = new ButtonGroup();
             JRadioButton noneButton = new JRadioButton("None",true);
             noneButton.setBackground(MainWindow.backgroundColor);
-            noneButton.setForeground(MainWindow.textButtonColor);
+            noneButton.setForeground(MainWindow.textColor);
             JRadioButton whiteButton = new JRadioButton("White");
             whiteButton.setBackground(MainWindow.backgroundColor);
-            whiteButton.setForeground(MainWindow.textButtonColor);
+            whiteButton.setForeground(MainWindow.textColor);
             JRadioButton blackButton = new JRadioButton("Black");
             blackButton.setBackground(MainWindow.backgroundColor);
-            blackButton.setForeground(MainWindow.textButtonColor);
+            blackButton.setForeground(MainWindow.textColor);
             preferredColorGroup.add(noneButton);
             preferredColorGroup.add(whiteButton);
             preferredColorGroup.add(blackButton);
@@ -260,7 +281,7 @@ public class MainWindow extends JFrame {
             add(joinButton,gbc);
 
             JLabel preferredColorLabel = new JLabel("Preferred Color:",JLabel.CENTER);
-            preferredColorLabel.setForeground(MainWindow.textButtonColor);
+            preferredColorLabel.setForeground(MainWindow.textColor);
             gbc.weighty = 0.5;
             gbc.gridx = 1;
             gbc.gridy = 3;
@@ -282,6 +303,9 @@ public class MainWindow extends JFrame {
 
         }
 
+        /**
+         * Updates the labels on the panel
+         */
         public void update(){
             if (game.getIsServerOn()){
                 serverStatus.setText("Server: ON ");
@@ -290,13 +314,16 @@ public class MainWindow extends JFrame {
             }
 
             if (game.isConnecting()){
-                connectingStatus.setForeground(MainWindow.textButtonColor);
+                connectingStatus.setForeground(MainWindow.textColor);
             }else {
                 connectingStatus.setForeground(MainWindow.backgroundColor);
             }
         }
     }
 
+    /**
+     * A class that represents the Game panel(view)
+     */
     private class GamePanel extends JPanel{
         private Game game;
         private GuiBoard guiBoard;
@@ -305,6 +332,10 @@ public class MainWindow extends JFrame {
         private JButton restartButton;
         private JButton surrenderButton;
 
+        /**
+         * Constructor
+         * @param game Reference to the game
+         */
         GamePanel(Game game){
             setBackground(MainWindow.backgroundColor);
             this.game = game;
@@ -340,26 +371,26 @@ public class MainWindow extends JFrame {
             Font font1 = new Font(Font.SERIF, Font.PLAIN,  20);
             whoseMove = new JLabel("",JLabel.CENTER);
             whoseMove.setFont(font1);
-            whoseMove.setForeground(MainWindow.textButtonColor);
+            whoseMove.setForeground(MainWindow.textColor);
             yourMove = new JLabel("YOUR MOVE!!!",JLabel.CENTER);
             yourMove.setVisible(false);
             yourMove.setFont(font1);
-            yourMove.setForeground(MainWindow.textButtonColor);
+            yourMove.setForeground(MainWindow.textColor);
             infoPanel.add(whoseMove);
             infoPanel.add(yourMove);
 
 
             //buttons panel
             restartButton = new JButton("Restart");
-            restartButton.setForeground(MainWindow.textButtonColor);
+            restartButton.setForeground(MainWindow.textColor);
             restartButton.setBackground(MainWindow.buttonColor);
             restartButton.setVisible(false);
             surrenderButton = new JButton("Surrender");
-            surrenderButton.setForeground(MainWindow.textButtonColor);
+            surrenderButton.setForeground(MainWindow.textColor);
             surrenderButton.setBackground(MainWindow.buttonColor);
             surrenderButton.setVisible(false);
             JButton mainMenuButton = new JButton("MainMenu");
-            mainMenuButton.setForeground(MainWindow.textButtonColor);
+            mainMenuButton.setForeground(MainWindow.textColor);
             mainMenuButton.setBackground(MainWindow.buttonColor);
 
             restartButton.addActionListener(new ActionListener() {
@@ -395,6 +426,9 @@ public class MainWindow extends JFrame {
             this.add(rightPanel,BorderLayout.EAST);
         }
 
+        /**
+         * Updates Gui(labels, displayed board, buttons)
+         */
         public void updateLabelsAndButtons(){
             if(game.getCurrentMove()==Piece.Color.WHITE){
                 whoseMove.setText("TURN: WHITE");
@@ -432,11 +466,12 @@ public class MainWindow extends JFrame {
             }
         }
 
-
+        /**
+         * @return The gui board
+         */
         public GuiBoard getGuiBoard() {
             return guiBoard;
         }
     }
-
 
 }
